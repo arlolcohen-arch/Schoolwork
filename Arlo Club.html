@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>playful.fun — mini projects</title>
+<style>
+  :root{
+    --bg:#0f1724; --card:#0b1220; --accent:#ff6b6b; --muted:#98a0b3; --glass: rgba(255,255,255,0.03);
+    --glass-2: rgba(255,255,255,0.02);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  html,body{height:100%}
+  body{
+    margin:0; background:
+    radial-gradient(800px 400px at 10% 10%, rgba(255,107,107,0.06), transparent 6%),
+    radial-gradient(600px 300px at 90% 90%, rgba(59,130,246,0.03), transparent 6%),
+    var(--bg);
+    color:#e6eef8;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
+    box-sizing:border-box;
+  }
+
+  header{
+    display:flex; gap:16px; align-items:center; margin-bottom:20px;
+  }
+  .logo{
+    width:56px; height:56px; display:grid; place-items:center;
+    background:linear-gradient(135deg,#ff6b6b,#ffb86b);
+    border-radius:12px; color:#071028; font-weight:700; font-size:20px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.45);
+  }
+  h1{font-size:20px; margin:0}
+  p.lead{margin:0; color:var(--muted); font-size:13px}
+
+  .grid{
+    display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+    gap:16px; margin-top:18px;
+  }
+
+  .card{
+    background: linear-gradient(180deg,var(--glass),var(--glass-2));
+    border-radius:12px; padding:16px; min-height:140px; position:relative;
+    box-shadow: 0 6px 20px rgba(2,6,23,0.6);
+    border:1px solid rgba(255,255,255,0.03);
+    overflow:hidden;
+  }
+  .card h3{margin:0 0 8px 0; font-size:16px}
+  .card p{margin:0; color:var(--muted); font-size:13px}
+
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:8px 10px;
+    background:transparent; border:1px solid rgba(255,255,255,0.06);
+    color:inherit; border-radius:8px; cursor:pointer; margin-top:12px;
+    font-size:13px;
+  }
+
+  footer{margin-top:22px; color:var(--muted); font-size:13px}
+
+  /* Modal panel / project area */
+  .panel{
+    position:fixed; inset:0; display:none; align-items:center; justify-content:center;
+    background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.86));
+    z-index:60; padding:20px;
+  }
+  .panel.open{display:flex}
+  .panel-inner{
+    width:min(1100px,98%); max-height:92vh; overflow:auto;
+    background:linear-gradient(180deg,#071021, #071425); border-radius:14px; padding:18px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.7); border:1px solid rgba(255,255,255,0.04);
+  }
+  .panel-head{display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:12px}
+  .close{background:transparent; border:0; color:var(--muted); cursor:pointer; font-size:14px}
+  .project-area{background:linear-gradient(180deg,#07142655,#07152455); padding:12px; border-radius:10px}
+
+  /* specific small project styles */
+  #spaceCanvas{width:100%; height:360px; background:linear-gradient(#021025,#001428); border-radius:10px; display:block}
+  .controls{display:flex; gap:8px; margin-top:12px; align-items:center; flex-wrap:wrap}
+  .stat{background:#071722aa; padding:6px 10px; border-radius:999px; color:var(--muted); font-size:13px}
+
+  /* responsive tweaks */
+  @media (max-width:520px){
+    .logo{width:44px;height:44px;font-size:16px}
+    .panel-inner{padding:12px}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">PF</div>
+  <div>
+    <h1>playful.fun — tiny projects</h1>
+    <p class="lead">A playful project grid — inspired by creative project collections. Click any tile to try a mini experience.</p>
+  </div>
+</header>
+
+<div class="grid">
+  <div class="card">
+    <h3>Mini Space — click to launch</h3>
+    <p>Click to spawn colorful rockets that float and explode into particles.</p>
+    <button class="btn" data-project="space">Open Space →</button>
+  </div>
+
+  <div class="card">
+    <h3>Slice of Pi</h3>
+    <p>Visualize digits of π as colored slices (random demo digits included).</p>
+    <button class="btn" data-project="pi">Open Slice of Pi →</button>
+  </div>
+
+  <div class="card">
+    <h3>Click Counter</h3>
+    <p>Simple click counter that celebrates milestones.</p>
+    <button class="btn" data-project="counter">Open Counter →</button>
+  </div>
+
+  <div class="card">
+    <h3>Random Quote</h3>
+    <p>Small off-line quote rotator — refresh for a new tip or one-liner.</p>
+    <button class="btn" data-project="quote">Open Quotes →</button>
+  </div>
+</div>
+
+<footer>
+  Made for fun — tweak this code however you want. (Not the original site code.)
+</footer>
+
+<!-- panel -->
+<div class="panel" id="panel">
+  <div class="panel-inner" role="dialog" aria-modal="true">
+    <div class="panel-head">
+      <div>
+        <strong id="panelTitle">Project</strong>
+        <div id="panelSubtitle" style="color:var(--muted); font-size:13px">interactive demo</div>
+      </div>
+      <div>
+        <button class="close" id="closeBtn">Close ✕</button>
+      </div>
+    </div>
+
+    <div class="project-area" id="projectArea">
+      <!-- project contents injected here -->
+      <div id="proj-default" style="color:var(--muted)">Pick a project from the grid above.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* Lightweight app navigation */
+const panel = document.getElementById('panel');
+const projectArea = document.getElementById('projectArea');
+const title = document.getElementById('panelTitle');
+const subtitle = document.getElementById('panelSubtitle');
+
+document.querySelectorAll('.btn[data-project]').forEach(b=>{
+  b.addEventListener('click', ()=> openProject(b.dataset.project));
+});
+document.getElementById('closeBtn').addEventListener('click', closePanel);
+
+function openProject(id){
+  panel.classList.add('open');
+  if(id==='space') loadSpace();
+  else if(id==='pi') loadPi();
+  else if(id==='counter') loadCounter();
+  else if(id==='quote') loadQuote();
+}
+
+/* close and cleanup */
+function closePanel(){
+  panel.classList.remove('open');
+  projectArea.innerHTML = '<div id="proj-default" style="color:var(--muted)">Pick a project from the grid above.</div>';
+  // stop animation loops if any
+  if(window._spaceLoop) { cancelAnimationFrame(window._spaceLoop); window._spaceLoop = null; }
+}
+
+/* -------------------------
+   Project: Mini Space
+   ------------------------- */
+function loadSpace(){
+  title.textContent = 'Mini Space';
+  subtitle.textContent = 'Click inside the canvas to spawn rockets';
+  projectArea.innerHTML = `
+    <canvas id="spaceCanvas"></canvas>
+    <div class="controls">
+      <button id="clearSpace" class="btn">Clear</button>
+      <div class="stat" id="rocketCount">Rockets: 0</div>
+      <div class="stat" id="particleCount">Particles: 0</div>
+    </div>
+    <p style="color:var(--muted); margin-top:10px; font-size:13px">Tip: click or tap to spawn colorful rockets.</p>
+  `;
+  const canvas = document.getElementById('spaceCanvas');
+  const ctx = canvas.getContext('2d');
+  function resize(){ canvas.width = canvas.clientWidth * devicePixelRatio; canvas.height = 360 * devicePixelRatio; ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const rockets = [];
+  const particles = [];
+
+  function random(min,max){ return min + Math.random()*(max-min); }
+
+  canvas.addEventListener('pointerdown', (e)=>{
+    const rect = canvas.getBoundingClientRect();
+    const x = (e.clientX - rect.left);
+    const y = (e.clientY - rect.top);
+    spawnRocket(x, y);
+  });
+
+  function spawnRocket(x,y){
+    rockets.push({
+      x, y: canvas.height / devicePixelRatio + 20,
+      vx: random(-0.6, 0.6), vy: random(-6.8, -9.6),
+      hue: Math.floor(random(0,360)), life: 0, explodeAt: random(40,80)
+    });
+  }
+
+  function spawnParticles(x,y, hue){
+    const c = Math.random() > 0.4 ? 1 : 0.6;
+    const n = Math.floor(random(18,40) * c);
+    for(let i=0;i<n;i++){
+      const ang = Math.random()*Math.PI*2;
+      const speed = random(0.8,6) * (Math.random()**0.6);
+      particles.push({
+        x, y,
+        vx: Math.cos(ang)*speed,
+        vy: Math.sin(ang)*speed,
+        life: 0, maxLife: random(40,120),
+        hue: (hue + random(-40,40) + 360) % 360,
+        size: random(1,3)
+      });
+    }
+  }
+
+  function step(){
+    ctx.clearRect(0,0,canvas.width, canvas.height);
+    // sky background subtle stars
+    ctx.fillStyle = 'rgba(255,255,255,0.02)';
+    for(let i=0;i<40;i++){
+      const sx = (i*47) % canvas.width;
+      const sy = (i*31) % canvas.height;
+      ctx.fillRect((sx % canvas.width)/devicePixelRatio, (sy % canvas.height)/devicePixelRatio, 0.6, 0.6);
+    }
+
+    // rockets
+    for(let i=rockets.length-1;i>=0;i--){
+      const r = rockets[i];
+      r.vy += 0.12; // gravity-ish
+      r.x += r.vx;
+      r.y += r.vy;
+      r.life++;
+      // draw trail
+      ctx.beginPath();
+      ctx.moveTo(r.x, r.y);
+      ctx.lineTo(r.x - r.vx*4, r.y - r.vy*4);
+      ctx.strokeStyle = `hsla(${r.hue},80%,60%,0.9)`;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      if(r.life > r.explodeAt){
+        spawnParticles(r.x, r.y, r.hue);
+        rockets.splice(i,1);
+      }
+    }
+
+    // particles
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.vy += 0.04; // gravity
+      p.vx *= 0.995;
+      p.vy *= 0.995;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life++;
+      const t = p.life / p.maxLife;
+      const alpha = Math.max(0, 1 - t);
+      const size = p.size * (1 - t*0.6);
+      ctx.fillStyle = `hsla(${p.hue},85%,60%,${alpha})`;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, size, 0, Math.PI*2);
+      ctx.fill();
+      if(p.life >= p.maxLife) particles.splice(i,1);
+    }
+
+    document.getElementById('rocketCount').textContent = 'Rockets: ' + rockets.length;
+    document.getElementById('particleCount').textContent = 'Particles: ' + particles.length;
+
+    window._spaceLoop = requestAnimationFrame(step);
+  }
+
+  document.getElementById('clearSpace').addEventListener('click', ()=>{
+    rockets.length = 0;
+    particles.length = 0;
+  });
+
+  // spawn a few random rockets to start
+  for(let i=0;i<4;i++){
+    setTimeout(()=> spawnRocket(random(60, canvas.clientWidth-60), 0), i*300);
+  }
+
+  step();
+}
+
+/* -------------------------
+   Project: Slice of Pi
+   ------------------------- */
+function loadPi(){
+  title.textContent = 'Slice of Pi';
+  subtitle.textContent = 'Digits visualized as colorful slices (demo)';
+
+  projectArea.innerHTML = `
+    <div id="piWrap" style="display:flex; gap:14px; align-items:center; flex-wrap:wrap">
+      <svg id="piSVG" width="360" height="360" viewBox="-180 -180 360 360" style="background:linear-gradient(#041221,#001018); border-radius:10px"></svg>
+      <div style="max-width:340px; color:var(--muted);">
+        <p>Digits of π are mapped to color + size. This demo uses the first 64 digits of π after the decimal:</p>
+        <pre id="piDigits" style="background:#07121a;padding:10px;border-radius:6px;color:#a9c1ff;font-size:13px;overflow:auto;">14159265358979323846264338327950288419716939937510</pre>
+        <button id="remixPi" class="btn" style="margin-top:10px">Remix colors</button>
+      </div>
+    </div>
+  `;
+
+  const svg = document.getElementById('piSVG');
+  const digits = (document.getElementById('piDigits').textContent || '').replace(/[^0-9]/g,'').split('').slice(0,64);
+  const total = digits.length;
+  const radius = 140;
+  function render(seedOffset=0){
+    svg.innerHTML = '';
+    let angle = -Math.PI/2;
+    const step = Math.PI*2 / total;
+    for(let i=0;i<total;i++){
+      const d = parseInt(digits[i],10) || 0;
+      const slice = document.createElementNS('http://www.w3.org/2000/svg','path');
+      const r0 = 20 + (d * 8); // inner radius mapped from digit
+      const r1 = r0 + 20;
+      const a0 = angle;
+      const a1 = angle + step;
+      const x0 = Math.cos(a0) * r0, y0 = Math.sin(a0) * r0;
+      const x1 = Math.cos(a1) * r0, y1 = Math.sin(a1) * r0;
+      const X0 = Math.cos(a0) * r1, Y0 = Math.sin(a0) * r1;
+      const X1 = Math.cos(a1) * r1, Y1 = Math.sin(a1) * r1;
+      const large = (a1 - a0) > Math.PI ? 1 : 0;
+      const dAttr = `M ${x0} ${y0} L ${X0} ${Y0} A ${r1} ${r1} 0 ${large} 1 ${X1} ${Y1} L ${x1} ${y1} A ${r0} ${r0} 0 ${large} 0 ${x0} ${y0}`;
+      slice.setAttribute('d', dAttr);
+      const hue = (i * 37 + seedOffset + d*23) % 360;
+      slice.setAttribute('fill', `hsl(${hue} 85% 55% / 0.95)`);
+      slice.setAttribute('stroke', 'rgba(0,0,0,0.15)');
+      slice.setAttribute('stroke-width', '0.6');
+      svg.appendChild(slice);
+      angle += step;
+    }
+    // center dot
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx',0); dot.setAttribute('cy',0); dot.setAttribute('r',12);
+    dot.setAttribute('fill','rgba(255,255,255,0.06)');
+    svg.appendChild(dot);
+  }
+  render(0);
+  document.getElementById('remixPi').addEventListener('click', ()=> render(Math.floor(Math.random()*360)));
+}
+
+/* -------------------------
+   Project: Click Counter
+   ------------------------- */
+function loadCounter(){
+  title.textContent = 'Click Counter';
+  subtitle.textContent = 'Tap the big button — celebrate milestones';
+  projectArea.innerHTML = `
+    <div style="display:flex; gap:18px; align-items:center; flex-wrap:wrap">
+      <div style="background:linear-gradient(180deg,#071426,#031822); padding:18px; border-radius:12px; min-width:220px; text-align:center;">
+        <div style="font-size:46px; font-weight:700" id="countDisplay">0</div>
+        <div style="color:var(--muted); font-size:13px;">clicks</div>
+        <button id="bigClick" class="btn" style="margin-top:12px; font-size:18px; padding:12px 18px">CLICK</button>
+      </div>
+      <div style="max-width:540px; color:var(--muted);">
+        <p>Simple local counter — milestone confetti when you reach multiples of 50.</p>
+      </div>
+    </div>
+    <div id="confettiLayer" style="position:relative"></div>
+  `;
+
+  const display = document.getElementById('countDisplay');
+  const big = document.getElementById('bigClick');
+  let count = 0;
+  big.addEventListener('click', ()=>{
+    count++;
+    display.textContent = count;
+    if(count % 50 === 0){
+      celebrate();
+    }
+  });
+
+  function celebrate(){
+    const layer = document.getElementById('confettiLayer');
+    for(let i=0;i<40;i++){
+      const el = document.createElement('div');
+      el.style.position = 'absolute';
+      el.style.left = (50 + (Math.random()*220 - 110)) + 'px';
+      el.style.top = (20 + Math.random()*80) + 'px';
+      el.style.width = '8px';
+      el.style.height = '12px';
+      el.style.background = `hsl(${Math.random()*360} 85% 60%)`;
+      el.style.opacity = '0.95';
+      el.style.borderRadius = '2px';
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      el.style.transition = 'transform 1.2s linear, top 1.2s linear, opacity 1.2s linear';
+      layer.appendChild(el);
+      requestAnimationFrame(()=> {
+        el.style.top = (parseFloat(el.style.top) + 160 + Math.random()*120) + 'px';
+        el.style.transform = `rotate(${Math.random()*620}deg) translateX(${Math.random()*60 - 30}px)`;
+        el.style.opacity = '0';
+      });
+      setTimeout(()=> el.remove(), 1400);
+    }
+  }
+}
+
+/* -------------------------
+   Project: Random Quote
+   ------------------------- */
+function loadQuote(){
+  title.textContent = 'Random Quote';
+  subtitle.textContent = 'A tiny offline rotator';
+  const quotes = [
+    "Make something people love.",
+    "Small steps, wild results.",
+    "Design for delight.",
+    "Play with code every day.",
+    "Keep experiments short and fun.",
+    "If it feels like magic, ship it.",
+    "Curiosity > permission."
+  ];
+  const q = quotes[Math.floor(Math.random()*quotes.length)];
+  projectArea.innerHTML = `
+    <div style="padding:18px; border-radius:10px; background:linear-gradient(180deg,#071226,#041220);">
+      <div style="font-size:20px; margin-bottom:8px">“${q}”</div>
+      <div style="color:var(--muted); font-size:13px">— A friendly reminder</div>
+      <div style="margin-top:12px">
+        <button id="newQuote" class="btn">New quote</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('newQuote').addEventListener('click', loadQuote);
+}
+
+/* close when clicking outside the inner panel */
+panel.addEventListener('pointerdown', (e)=>{
+  if(e.target === panel) closePanel();
+});
+</script>
+</body>
+</html>
